@@ -1,0 +1,20 @@
+# Microsoft Agent Framework (Python) runtime
+agent-framework-core==1.18.0
+agent-framework-openai==1.14.3
+agent-framework-a2a==1.0.0b260910
+
+# A2A protocol server (JSON-RPC routes, agent card, FastAPI integration)
+a2a-sdk[http-server,fastapi]==1.1.2
+
+# Microsoft 365 Agent SDK (Agent 365 lifecycle, authentication, routing)
+microsoft-agents-activity==1.5.0
+microsoft-agents-hosting-core==1.5.0
+microsoft-agents-authentication-msal==1.5.0
+
+# ASGI hosting
+fastapi==0.120.4
+uvicorn[standard]==0.41.0
+
+# Azure authentication and configuration
+azure-identity==1.25.3
+python-dotenv==1.2.1
