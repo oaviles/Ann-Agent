@@ -63,17 +63,24 @@ az account show >/dev/null 2>&1 || fail "Not logged in to Azure. Run 'az login' 
 
 log "Ensuring the Azure CLI 'containerapp' extension is installed"
 az extension add --name containerapp --upgrade --only-show-errors >/dev/null
-az provider register --namespace Microsoft.App --only-show-errors >/dev/null
-az provider register --namespace Microsoft.OperationalInsights --only-show-errors >/dev/null
+for provider in Microsoft.App Microsoft.ContainerRegistry Microsoft.OperationalInsights; do
+  if [[ "$(az provider show --namespace "$provider" --query registrationState -o tsv)" != "Registered" ]]; then
+    az provider register --namespace "$provider" --only-show-errors >/dev/null
+  fi
+done
 
 # ---------------------------------------------------------------------------
 # Resource group
 # ---------------------------------------------------------------------------
-log "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'"
-az group create \
-  --name "$RESOURCE_GROUP" \
-  --location "$LOCATION" \
-  --only-show-errors >/dev/null
+if az group show --name "$RESOURCE_GROUP" --only-show-errors >/dev/null 2>&1; then
+  log "Reusing existing resource group '$RESOURCE_GROUP'"
+else
+  log "Creating resource group '$RESOURCE_GROUP' in '$LOCATION'"
+  az group create \
+    --name "$RESOURCE_GROUP" \
+    --location "$LOCATION" \
+    --only-show-errors >/dev/null
+fi
 
 # ---------------------------------------------------------------------------
 # Azure Container Registry + image build
