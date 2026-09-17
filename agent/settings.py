@@ -43,7 +43,7 @@ class AzureOpenAISettings:
 
     endpoint: str = field(default_factory=lambda: _get_str("AZURE_OPENAI_ENDPOINT"))
     deployment_name: str = field(default_factory=lambda: _get_str("AZURE_OPENAI_DEPLOYMENT_NAME", "gpt-4o-mini"))
-    api_version: str = field(default_factory=lambda: _get_str("AZURE_OPENAI_API_VERSION", "2024-10-21"))
+    api_version: str = field(default_factory=lambda: _get_str("AZURE_OPENAI_API_VERSION", "v1"))
     api_key: str = field(default_factory=lambda: _get_str("AZURE_OPENAI_API_KEY"))
 
     @property

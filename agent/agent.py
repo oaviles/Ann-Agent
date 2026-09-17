@@ -40,6 +40,13 @@ def create_chat_client(settings: Settings | None = None) -> OpenAIChatClient:
         )
 
     logger.info("Connecting to Azure OpenAI at %s using an API key.", azure.endpoint)
+    if azure.api_version == "v1":
+        return OpenAIChatClient(
+            model=azure.deployment_name,
+            base_url=f"{azure.endpoint.rstrip('/')}/openai/v1/",
+            api_key=azure.api_key,
+        )
+
     return OpenAIChatClient(
         model=azure.deployment_name,
         azure_endpoint=azure.endpoint,
