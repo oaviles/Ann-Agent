@@ -24,7 +24,7 @@ from agent_framework import AgentResponse, Message  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 
-from agent.a2a_server import build_a2a_host, build_agent_card  # noqa: E402
+from agent.a2a_server import build_a2a_host, build_agent_card, build_legacy_agent_card  # noqa: E402
 from agent.agent365 import Agent365AuthMiddleware, Agent365Integration  # noqa: E402
 from agent.settings import Settings  # noqa: E402
 from agent.tools import count_business_days, get_current_time  # noqa: E402
@@ -76,6 +76,14 @@ def test_agent_card_advertises_a2a_endpoint(settings: Settings) -> None:
     assert card["version"] == settings.agent_version
     assert card["supportedInterfaces"][0]["url"] == "https://agent.example.com/a2a/v1"
     assert {skill["id"] for skill in card["skills"]} == {"general_assistance", "date_and_time"}
+
+
+def test_legacy_agent_card_advertises_url(settings: Settings) -> None:
+    card = build_legacy_agent_card(settings)
+
+    assert card["url"] == "https://agent.example.com/a2a/v1"
+    assert card["preferredTransport"] == "JSONRPC"
+    assert "supportedInterfaces" not in card
 
 
 def test_agent_card_is_served_on_well_known_path(settings: Settings) -> None:

@@ -15,6 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from a2a.server.request_handlers import DefaultRequestHandler
+from a2a.server.request_handlers.response_helpers import agent_card_to_dict
 from a2a.server.routes import create_agent_card_routes, create_jsonrpc_routes
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface, AgentSkill
@@ -63,6 +64,16 @@ def build_agent_card(settings: Settings | None = None) -> AgentCard:
         supported_interfaces=[AgentInterface(url=settings.a2a_url, protocol_binding="JSONRPC")],
         skills=AGENT_SKILLS,
     )
+
+
+def build_legacy_agent_card(settings: Settings | None = None) -> dict[str, object]:
+    """Build the pre-1.0 Agent Card shape used by older A2A clients."""
+    settings = settings or get_settings()
+    card = agent_card_to_dict(build_agent_card(settings))
+    card["url"] = settings.a2a_url
+    card["preferredTransport"] = "JSONRPC"
+    card.pop("supportedInterfaces", None)
+    return card
 
 
 @dataclass

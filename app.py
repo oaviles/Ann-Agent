@@ -9,11 +9,10 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from a2a.server.routes import add_a2a_routes_to_fastapi
-from a2a.server.request_handlers.response_helpers import agent_card_to_dict
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from agent.a2a_server import AGENT_CARD_PATH, LEGACY_AGENT_CARD_PATH, build_a2a_host
+from agent.a2a_server import AGENT_CARD_PATH, LEGACY_AGENT_CARD_PATH, build_a2a_host, build_legacy_agent_card
 from agent.agent import create_agent
 from agent.agent365 import Agent365AuthMiddleware, Agent365Integration
 from agent.settings import Settings, get_settings
@@ -61,7 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get(LEGACY_AGENT_CARD_PATH, include_in_schema=False)
     async def legacy_agent_card() -> JSONResponse:
         """Serve the agent card at the pre-1.0 A2A well-known path."""
-        return JSONResponse(agent_card_to_dict(a2a_host.agent_card))
+        return JSONResponse(build_legacy_agent_card(settings))
 
     @app.get("/healthz", tags=["health"])
     async def healthz() -> dict[str, str]:
